@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Look The No Look</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +12,7 @@
           colors: {
             'brand-dark': '#111827',
             'brand-light': '#F9FAFB',
-            'brand-accent': '#38BDF8', // A stylish light blue accent
+            'brand-accent': '#38BDF8',
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -22,6 +21,10 @@
             fadeIn: {
               '0%': { opacity: '0' },
               '100%': { opacity: '1' },
+            },
+            fadeOut: {
+              '0%': { opacity: '1' },
+              '100%': { opacity: '0' },
             },
             fadeInUp: {
               '0%': { opacity: '0', transform: 'translateY(20px)' },
@@ -34,7 +37,8 @@
             },
           },
           animation: {
-            'fade-in': 'fadeIn 0.8s ease-in-out forwards',
+            'fade-in': 'fadeIn 0.7s ease-in-out forwards',
+            'fade-out': 'fadeOut 0.7s ease-in-out forwards',
             'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
             'logo-reveal': 'logoReveal 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
           }
@@ -45,19 +49,147 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/"
-  }
-}
-</script>
 </head>
-<body class="bg-brand-dark">
-    <div id="root"></div>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
-    <script type="module" src="/index.tsx"></script>
+<body class="bg-brand-dark text-brand-light font-sans overflow-hidden">
+
+    <div class="relative min-h-screen w-full flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"></div>
+
+      <!-- Landing Page -->
+      <section id="landing-page" class="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+        <div style="animation-delay: '100ms'">
+          <img 
+            src="https://i.imgur.com/Sdc5JJz.png" 
+            alt="Look The No Look Logo" 
+            class="w-40 h-40 md:w-48 md:h-48 object-contain mb-8 animate-logo-reveal" 
+          />
+        </div>
+
+        <h1 
+          style="animation-delay: '300ms'" 
+          class="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-4 animate-fade-in-up"
+        >
+          Look The No Look
+        </h1>
+
+        <p 
+          style="animation-delay: '500ms'" 
+          class="max-w-2xl text-lg md:text-xl text-gray-300 mb-8 animate-fade-in-up"
+        >
+          Un grazie di cuore a tutti coloro che hanno creduto in questo progetto. Il vostro supporto è la nostra più grande ispirazione.
+        </p>
+
+        <div style="animation-delay: '700ms'" class="text-center mb-10 animate-fade-in-up">
+          <p class="text-lg text-gray-400 mb-2 tracking-widest uppercase">Totale Raccolto</p>
+          <p id="counter" class="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-200 to-brand-accent">
+              0 €
+          </p>
+        </div>
+
+        <button
+          id="show-donors-btn"
+          style="animation-delay: '900ms'"
+          class="group relative inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-white bg-brand-dark border-2 border-brand-accent rounded-lg overflow-hidden transition-all duration-300 ease-in-out hover:bg-brand-accent hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-dark animate-fade-in-up"
+        >
+          <span class="relative z-10 flex items-center gap-2">
+              Scopri i donatori
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+          </span>
+        </button>
+      </section>
+
+      <!-- Donors Page -->
+      <section id="donors-page" class="absolute inset-0 flex flex-col h-screen w-full p-4 md:p-8 opacity-0 pointer-events-none">
+          <header class="w-full flex-shrink-0 z-10">
+              <div class="flex justify-between items-center">
+                  <button id="go-back-btn" class="group flex items-center gap-2 text-gray-300 hover:text-brand-accent transition-colors duration-300 bg-brand-dark/50 backdrop-blur-sm p-2 rounded-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 transition-transform duration-300 group-hover:-translate-x-1"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+                      <span class="text-lg">Indietro</span>
+                  </button>
+                  <img src="https://i.imgur.com/Sdc5JJz.png" alt="Look The No Look Logo" class="w-20 h-20 object-contain" />
+              </div>
+          </header>
+          <main class="relative flex-grow w-full overflow-y-auto mt-8">
+              <div id="donors-list" class="text-gray-300 text-lg columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-x-8">
+                  <!-- Donors will be populated by JS -->
+              </div>
+          </main>
+      </section>
+
+    </div>
+
+    <script type="module">
+        const DONORS = ["Giuseppe Nicoli", "Fogliato Amelia", "Stefano Chemello", "Lucio Graziani", "Maculan Valeria", "Stefania Farina", "Sofia Scettro", "Angela Mirella Castello", "Giovanna Azzolin", "Ivan Dalla Fontana", "Elisa Dall Carbonare", "Chiara Pertoldi", "Matteo Cavedon", "Valeria Dal Ponte", "Renata Viero", "Sara Pintonello", "Ugo Frigo", "Paolo Cattelan", "Letizia Zilio", "Silvia Farina", "Carla Cortese", "Filippo Callegari", "Stefano Faresin", "Daniele Poli", "Roberta Zolin", "Stefano Sperotto", "Alessandro Crivellaro", "Anna Mari Martini", "Alberto Grotto", "Sara Tazzoli", "Roberto Ferretto", "Davide Pauletto", "Lucia Valerio", "Matteo Grotto", "Itala Grando LA FRASCA", "Carlo Grotto", "Giulia Caneva", "Laurab", "Famiglia Zenarolla", "Consuelo Stella", "Debora Montemurro", "Matteo Rossano Buonocore", "ZERBATO CRISTINA", "The Vellers", "POMOPERO SNC Di Pallaro Luca & C.", "REMEMBER DI BALASSO LORENZO & C. SAS", "ASAP SPRAY DI MASSIMO SIMONATO", "Anastasia Brotto", "Fabio Urbani", "Alessandra Pertile", "Todesco Matteo", "Arianna Viero", "Luisa Binotto", "Giuseppe Sciessere", "Simone Capraro", "Ilenia Passuello", "Carlo Bressan", "Ilenia Zampierollo", "OMTM XAUSA SRL", "Lorenzo Muraro", "Spytek SRL", "Andrea Alba", "Giulia Pettinà", "Elena Sperotto", "Valeria Tomasi", "Manuel Dalle Nogare", "Alessandra Guerra", "Serena Bassi", "Luca Francesco Maculan", "Ernesto Garzotto", "Appolloni Manuela E Rossi Paolo", "Andrea Tessari", "Michela Tolin", "Tecno Canale Snc", "Alessia Rollo", "Alberto Dalla Valle", "Gustavo Mendez", "Guido Miotti", "Giacomo Leoni", "Corrado Poli", "Luca Tognon", "Davide Farina", "Simone Uliana", "Francesco Castello", "Umberto Pizzato", "Teodoro Ramos", "Bisconti Antonio", "Daniele Dal Lago", "Federico Dalla Valle", "Elisa Bressanutti", "Christian Sperotto", "Alessandro Marozin", "Massimiliano Mastercchia", "Zancanaro Angela", "Albino Saterini", "Aurora Battistello", "Giovanni Bortoli", "Alessandra Zappon", "Andrea Dal Lago", "Monica Bon", "Sara Pedemonte", "Marilena Dalla Costa", "Erika Costenaro", "Samuele", "Lara Michelon", "Filippo E Annachiara Sesso", "Leandro Battistello", "Graziano Saugo", "Andrea Rossato", "Lisa Keogh", "Sabrina Rizzato", "Checco E Ilaria", "Francesco Sangermano", "Luca Frigo", "Felice Rafina", "Andrea Miotti", "Lucia", "Devis Munaretto", "Achille Prandina", "Andrea Battistin", "Enrico Garzotto", "Paola Dallemulle", "Antonello Mattassoni", "Arianna Viero", "Anna Maria Martini", "Chiara Stefani", "Roberto Munaretto", "Michela Verlato", "Eleonora Farina", "Dal Lago Anna", "Giovanni Cattelan", "Igor Viero", "BCC Veneta - Veneta Con Te ETS - Contributo Con Te Facciamoci Del Bene"
+            ];
+
+        // --- ELEMENTS ---
+        const landingPage = document.getElementById('landing-page');
+        const donorsPage = document.getElementById('donors-page');
+        const showDonorsBtn = document.getElementById('show-donors-btn');
+        const goBackBtn = document.getElementById('go-back-btn');
+        const counterEl = document.getElementById('counter');
+        const donorsListEl = document.getElementById('donors-list');
+
+        // --- PAGE TRANSITIONS ---
+        function showPage(pageToShow, pageToHide) {
+            pageToHide.classList.remove('animate-fade-in');
+            pageToHide.classList.add('animate-fade-out');
+            
+            setTimeout(() => {
+                pageToHide.classList.add('pointer-events-none');
+                pageToHide.classList.add('opacity-0');
+
+                pageToShow.classList.remove('pointer-events-none');
+                pageToShow.classList.remove('opacity-0');
+                pageToShow.classList.remove('animate-fade-out');
+                pageToShow.classList.add('animate-fade-in');
+            }, 700);
+        }
+
+        showDonorsBtn.addEventListener('click', () => {
+            showPage(donorsPage, landingPage);
+        });
+
+        goBackBtn.addEventListener('click', () => {
+            showPage(landingPage, donorsPage);
+        });
+
+        // --- COUNTER ANIMATION ---
+        function animateCounter() {
+            const targetAmount = 10145;
+            let startTimestamp = null;
+            const duration = 2500;
+
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentAmount = Math.floor(progress * targetAmount);
+                
+                counterEl.textContent = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(currentAmount);
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+            requestAnimationFrame(step);
+        }
+
+        // --- POPULATE DONORS LIST ---
+        function populateDonors() {
+            donorsListEl.innerHTML = ''; // Clear existing list
+            DONORS.forEach(donor => {
+                const p = document.createElement('p');
+                p.textContent = donor;
+                p.className = 'mb-3 p-2 rounded-md hover:bg-white/10 transition-colors';
+                donorsListEl.appendChild(p);
+            });
+        }
+
+        // --- INITIALIZE APP ---
+        document.addEventListener('DOMContentLoaded', () => {
+            animateCounter();
+            populateDonors();
+        });
+    </script>
 </body>
 </html>
